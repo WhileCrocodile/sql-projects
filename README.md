@@ -1,3 +1,5 @@
-# sql-projects
+This repository stores the working files and results for my personal projects done to learn and practice SQL.
 
-This is a repository for the work and results of my personal projects done to practice using SQL.
+| project_name | project_folder | description | skill level | data_source | 
+| --- | --- | --- | --- | --- | 
+| Murder Mystery Puzzle | murder_mystery | A self-directed lesson for practicing SQL | intermediate | https://mystery.knightlab.com/#experienced | 
