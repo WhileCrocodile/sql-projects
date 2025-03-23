@@ -1,0 +1,60 @@
+-- SELECT name 
+--   FROM sqlite_master
+--   WHERE type = 'table';
+-- SELECT sql 
+--   FROM sqlite_master
+--   WHERE name = 'crime_scene_report';
+
+-- SELECT * FROM crime_scene_report 
+-- 	WHERE type = "murder" AND date = "20180115" AND city = "SQL City";
+-- Security footage shows that there were 2 witnesses. The first witness lives at the last house on "Northwestern Dr". The second witness, named Annabel, lives somewhere on "Franklin Ave".
+
+-- SELECT * FROM person 
+-- 	WHERE (name LIKE "%Annabel%" AND address_street_name = "Franklin Ave");
+-- id 16371
+
+-- SELECT * from person
+-- 	WHERE address_street_name = "Northwestern Dr"
+-- 	ORDER BY address_number DESC
+-- 	LIMIT 1;
+-- id 14887
+
+-- SELECT * from interview 
+-- 	WHERE person_id = "16371" OR person_id = "14887";
+-- Killer had  a Get Fit Now Gym bag with membership number starting with "48Z" and had a bag indicating a gold member.
+-- Killer's license plate included H42W.
+-- Killer was at the gym on Jan 9th, 2018.
+
+-- SELECT p.id, fc.membership_id, fm.membership_status, fc.check_in_date, d.plate_number FROM person p
+-- 	INNER JOIN get_fit_now_member fm ON p.id = fm.person_id
+-- 	INNER JOIN get_fit_now_check_in fc ON fm.id = fc.membership_id
+-- 	INNER JOIN drivers_license d ON p.license_id = d.id
+-- 	WHERE membership_id LIKE "48Z%" AND membership_status = "gold" AND plate_number LIKE "%H42W%";
+-- person_id 67318
+
+-- SELECT * from person
+-- 	WHERE id = 67318
+-- Jeremy Bowers
+
+-- INSERT INTO solution VALUES (1, 'Jeremy Bowers');
+--         SELECT value FROM solution;
+-- Congrats, you found the murderer! But wait, there's more... If you think you're up for a challenge, try querying the interview transcript of the murderer to find the real villain behind this crime. 
+-- If you feel especially confident in your SQL skills, try to complete this final step with no more than 2 queries. Use this same INSERT statement with your new suspect to check your answer.
+
+-- SELECT * from interview
+-- 	WHERE person_id = 67318
+-- I was hired by a woman with a lot of money. 
+-- around 5'5" (65") or 5'7" (67")
+-- red hair and she drives a Tesla Model S
+-- attended the SQL Symphony Concert 3 times in December 2017.
+
+-- SELECT p.name, fe.person_id, d.car_make, count() FROM facebook_event_checkin fe
+-- 	INNER JOIN person p ON p.id = fe.person_id
+-- 	INNER JOIN drivers_license d ON p.license_id=d.id
+-- 	WHERE event_name LIKE "%Symphony%" 
+-- 	GROUP BY person_id HAVING count()=3 AND DATE like "201712%" AND car_make LIKE "%Tesla%"
+-- Miranda Priestly
+
+INSERT INTO solution VALUES (1, 'Miranda Priestly');
+	SELECT value FROM solution;
+-- Congrats, you found the brains behind the murder! Everyone in SQL City hails you as the greatest SQL detective of all time. Time to break out the champagne!
