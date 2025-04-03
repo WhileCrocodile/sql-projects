@@ -1,0 +1,35 @@
+load data local infile 'Fecom_Inc_Order_Items.csv' into table fecom_inc_order_items
+ fields terminated by ';'
+ enclosed by '"'
+ lines terminated by '\n'
+ (Order_Item_ID, Product_ID_ID, Seller_ID,Shipping_Limit_Date,Price,Freight_Value)
+
+LOAD DATA 
+LOCAL INFILE 'Fecom_Inc_Order_Payments.csv' 
+INTO TABLE fecom_inc_order_payments 
+FIELDS TERMINATED BY';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS
+(Order_ID,Payment_Sequential,Payment_Type,Payment_Installments,Payment_Value);
+
+LOAD DATA 
+LOCAL INFILE 'Fecom_Inc_Order_Reviews_No_Emojis.csv' 
+INTO TABLE fecom_inc_order_reviews_no_emojis
+FIELDS TERMINATED BY';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS
+(Review_ID,Order_ID,Review_Score,Review_Comment_Title_En,Review_Comment_Message_En,Review_Creation_Date,Review_Answer_Timestamp);
+
+LOAD DATA 
+LOCAL INFILE "Fecom_Inc_Orders.csv"
+INTO TABLE fecom_inc_orders
+FIELDS TERMINATED BY';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS
+(Order_ID,Customer_Trx_ID,Order_Status,Order_Purchase_Timestamp,Order_Approved_At,Order_Delivered_Carrier_Date,Order_Delivered_Customer_Date,Order_Estimated_Delivery_Date);
+
+LOAD DATA 
+LOCAL INFILE "Fecom_Inc_Products.csv"
+INTO TABLE fecom_inc_products
+FIELDS TERMINATED BY';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS
+(Product_ID,Product_Category_Name,Product_Weight_Gr,Product_Length_Cm,Product_Height_Cm,Product_Width_Cm);
+
+LOAD DATA 
+LOCAL INFILE "Fecom_Inc_Sellers_List.csv"
+INTO TABLE fecom_inc_sellers_list
+FIELDS TERMINATED BY';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS
+(Seller_ID,Seller_Name,Seller_Postal_Code,Seller_City,Country_Code,Seller_Country);
