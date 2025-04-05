@@ -24,7 +24,7 @@ if __name__ == "__main__":
     readme_intro += "\n\n" + markdown_table
 
     with open("README.md", "w") as readmefile:
-        readmefile.write(readme_string)
+        readmefile.write(readme_intro)
 
 
         
