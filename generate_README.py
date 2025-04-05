@@ -1,7 +1,7 @@
 # Regenerates the README.md based on the data from project_info.csv
 import csv
 
-readme_string = '''This repository stores the working files and results for my personal projects done to learn and practice SQL.'''
+readme_intro = '''This repository stores the results of my personal projects done in SQL.'''
 
 # Converts a list of entries into a markdown table row
 def array_to_tablerow(array):
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     markdown_table = ""
     for one_row in csv_rows:
         markdown_table += array_to_tablerow(one_row) + "\n"
-    readme_string += "\n\n" + markdown_table
+    readme_intro += "\n\n" + markdown_table
 
     with open("README.md", "w") as readmefile:
         readmefile.write(readme_string)
