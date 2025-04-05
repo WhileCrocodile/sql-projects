@@ -166,6 +166,42 @@ FROM fecom_inc_orders_asdates AS orders
 LEFT JOIN fecom_inc_customer_list AS customers ON orders.Customer_Trx_ID = customers.Customer_Trx_ID
 ORDER BY Delivery_Delay DESC;
 
+/* What are our customer demographics? Who's our highest spenders? */
+SELECT customers.Customer_Trx_ID, customers.Customer_Country, customers.Age, customers.Gender, orders.Order_ID, items.Price
+FROM fecom_inc_customer_list AS customers
+INNER JOIN fecom_inc_orders AS orders ON customers.Customer_Trx_ID = orders.Customer_Trx_ID
+INNER JOIN fecom_inc_order_items AS items ON orders.Order_ID = items.Order_ID;
+
+-- Strange problem here; Every order has 2 rows; one row is dedicated to recording the payment method
+-- and some type of ID under Product_ID and Seller_ID; either a mistake or a bad convention
+SELECT * FROM fecom_inc_order_items AS items
+ORDER BY items.Order_ID;
+-- We can fix that by using a subquery to only select for rows without nulls
+
+SELECT *, 
+	Price-avg_purchases_byage AS diff_from_agedemographic, 
+	Price-avg_purchases_bygender AS diff_from_genderdemographic
+FROM (
+	SELECT customers.Customer_Trx_ID, customers.Customer_Country, customers.Age, customers.Gender,
+		orders.Order_ID,
+		items.Price,
+		SUM(items.Price) OVER(PARTITION BY customers.Customer_Trx_ID) AS total_customer_purchases,
+		AVG(items.Price) OVER(PARTITION BY customers.Age) AS avg_purchases_byage,
+		AVG(items.Price) OVER(PARTITION BY customers.Gender) AS avg_purchases_bygender
+	FROM fecom_inc_customer_list AS customers
+	INNER JOIN fecom_inc_orders AS orders ON customers.Customer_Trx_ID = orders.Customer_Trx_ID
+	INNER JOIN (SELECT * FROM fecom_inc_order_items AS orig_items
+		WHERE orig_items.PRICE IS NOT NULL) AS items
+		ON orders.Order_ID = items.Order_ID
+	ORDER BY total_customer_purchases DESC
+) AS demo_stats;
+/* Every customer has placed only one order, so total_customer_purchases is the same as Price.
+However, now we can see the purchasing decisions by age demographic and gender demographic,
+and per customer we can see if they spend more or less than their demographic. */
+
+
+
+
 
 
 
