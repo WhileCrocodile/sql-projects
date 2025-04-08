@@ -1,4 +1,6 @@
 CREATE DATABASE dating_app;
+USE dating_app;
+
 CREATE TABLE dating_app_behavior (
 	gender VARCHAR(100),
     sexual_orientation VARCHAR(100),
@@ -22,3 +24,80 @@ CREATE TABLE dating_app_behavior (
 );
 
 SELECT * FROM dating_app_behavior;
+
+/* What are our demographics like? */
+SELECT gender, COUNT(*) AS count
+	FROM dating_app_behavior
+	GROUP BY gender;
+SELECT sexual_orientation, COUNT(*) AS count
+	FROM dating_app_behavior
+	GROUP BY sexual_orientation;
+SELECT location_type, COUNT(*) AS count
+	FROM dating_app_behavior
+	GROUP BY location_type;
+SELECT education_level, COUNT(*) AS count
+	FROM dating_app_behavior
+	GROUP BY education_level;
+SELECT gender, sexual_orientation, location_type, education_level, COUNT(*) count
+	FROM dating_app_behavior
+	GROUP BY gender, sexual_orientation, location_type, education_level;
+/* There are only small differences between population counts; it's likely this synthetic data was generated 
+with an equal probability for any feature to occur, which is not realistic to real-life conditions. */
+
+/* What are the most common interests? */
+SELECT interest_tags, COUNT(*)
+FROM dating_app_behavior
+GROUP BY interest_tags;
+-- interest_tags is in list form; we have to separate them into individual rows to count them
+
+-- For identification, we create a primary key column
+ALTER TABLE dating_app_behavior
+ADD COLUMN user_id INT NOT NULL AUTO_INCREMENT UNIQUE PRIMARY KEY;
+
+-- Next, we write the logic to separate our user_tags into distinct rows
+-- Each user has exactly three tags, so the logic is simple and discrete
+-- In MySQL, temp tables cannot be self-joined, so we use a CTE instead
+WITH user_tags AS (
+	SELECT user_id, SUBSTRING_INDEX(interest_tags, ",", 1) AS interest_tags
+	FROM dating_app_behavior
+	UNION
+	SELECT user_id, SUBSTRING_INDEX(SUBSTRING_INDEX(interest_tags, ",", 2), ",", -1) AS interest_tags
+	FROM dating_app_behavior
+	UNION
+	SELECT user_id, SUBSTRING_INDEX(interest_tags, ",", -1) AS interest_tags
+	FROM dating_app_behavior
+	ORDER BY user_id)
+
+-- Now, we can count our interests
+SELECT interest_tags, count(*) as count
+FROM user_tags
+GROUP BY interest_tags
+ORDER BY count DESC;
+/* This is a little more interesting than our demographics.*/
+
+/* Which interests occur the most often together, pair-wise?*/
+WITH user_tags AS (
+	SELECT *, ROW_NUMBER() OVER(PARTITION BY user_ID ORDER BY user_id DESC) AS tag_id
+    FROM (
+		SELECT user_id, SUBSTRING_INDEX(interest_tags, ",", 1) AS interest_tags
+		FROM dating_app_behavior
+		UNION
+		SELECT user_id, SUBSTRING_INDEX(SUBSTRING_INDEX(interest_tags, ",", 2), ",", -1) AS interest_tags
+		FROM dating_app_behavior
+		UNION
+		SELECT user_id, SUBSTRING_INDEX(interest_tags, ",", -1) AS interest_tags
+		FROM dating_app_behavior
+		ORDER BY user_id
+        ) AS split_tags
+    )
+
+SELECT ut1.interest_tags, ut2.interest_tags, COUNT(*) as count
+FROM user_tags ut1
+JOIN user_tags ut2
+	ON ut1.user_id = ut2.user_id
+    AND ut1.tag_id < ut2.tag_id
+GROUP BY ut1.interest_tags, ut2.interest_tags
+ORDER BY count DESC;
+/* Skating often occurs with Yoga
+...
+Tech occurs rarely with Gardening*/
