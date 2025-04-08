@@ -1,7 +1,7 @@
 # SQL Projects
 This repository stores the results of my personal projects done in SQL.
 
-# Table of Projects
+## Table of Projects
 | Project Name | Project Folder | Description | Skill Level | Skills Practiced | Data Source | 
 | --- | --- | --- | --- | --- | --- | 
 | Murder Mystery Puzzle | murder_mystery | A self-directed lesson for reviewing basic SQL | beginner | WHERE, GROUP BY, ORDER BY, JOIN | https://mystery.knightlab.com/#experienced | 
