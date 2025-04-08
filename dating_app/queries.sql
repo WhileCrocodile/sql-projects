@@ -101,3 +101,40 @@ ORDER BY count DESC;
 /* Skating often occurs with Yoga
 ...
 Tech occurs rarely with Gardening*/
+SELECT * FROM dating_app_behavior;
+
+/* How much usage is typical of each app_usage_time_label group?*/
+SELECT app_usage_time_label, AVG(app_usage_time_min) avg_usage
+FROM dating_app_behavior
+GROUP BY app_usage_time_label
+ORDER BY avg_usage DESC;
+
+/* Does time of day impact successful matches?*/
+SELECT swipe_time_of_day, match_outcome, COUNT(*)
+FROM dating_app_behavior
+GROUP BY swipe_time_of_day, match_outcome
+ORDER BY match_outcome;
+/* It does not. */
+
+/* Does education level impact their income bracket?*/
+SELECT income_bracket, education_level, count(*)
+FROM dating_app_behavior
+GROUP BY income_bracket, education_level
+ORDER BY income_bracket;
+/* According to this dataset, no. */
+
+/* Are people who get matches often likelier to get better match_outcomes? */
+SELECT *, count/(SUM(count) OVER(PARTITION BY num_matches_category)) percent_of_category
+FROM (
+	SELECT CASE WHEN mutual_matches <= 5 THEN "Few Matches"
+				WHEN mutual_matches <= 10 THEN "Moderate Matches"
+				WHEN mutual_matches <= 20 THEN "Many Matches"
+				WHEN mutual_matches <= 30  THEN "Many Many Matches"
+				END AS num_matches_category,
+			match_outcome,
+			COUNT(*) count
+	FROM dating_app_behavior
+    GROUP BY num_matches_category, match_outcome
+	ORDER BY num_matches_category, match_outcome
+) AS atable
+/* Not according to this data; every group gets the same proportion of outcomes. */
